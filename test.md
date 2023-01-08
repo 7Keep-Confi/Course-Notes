@@ -152,3 +152,14 @@ $$
 
 $\mathbb{R}$
 
+---
+
+各种图
+
+```mermaid
+graph LR
+  A --> B;
+  B --> C;
+  C --> A;
+```
+
