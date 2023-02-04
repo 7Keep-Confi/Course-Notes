@@ -159,6 +159,9 @@ Map 端的 Shuffle 过程包含4个步骤，如上图所示
 
 JobTracker 会一直监测 Map 任务的执行，当监测到一个 Map 任务完成后，就会立即通知相关的 Reduce 任务来「领取」数据，然后开始 Reduce 端的 Shuffle 过程
 
+> 补充：合并与归并的区别
+> 两个键值对<“a”,1>和<“a”,1>，如果合并，会得到<“a”,2>，如果归并，会得到<“a”,<1,1>>
+
 ##### Reduce 端的 Shuffle 过程
 
 Reduce 端的 Shuffle 过程非常简单，只需要从 Map 端读取 Map 结果，然后执行归并操作，最后输送给 Reduce 任务进行处理
