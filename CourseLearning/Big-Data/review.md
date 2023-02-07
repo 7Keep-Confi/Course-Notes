@@ -206,3 +206,88 @@ Reduce 任务需要把保存在 Map 机器本地磁盘上的数据「领取」�
 * 最后，确定MapReduce程序的执行过程
   * ![该程序的执行过程](images/2023-02-04-22-28-08.png)
 
+## 第九章 Spark
+
+### 概念与特点
+
+### 9.2 生态系统
+
+在实际应用中，大数据处理主要包括以下三个类型：
+
+* **复杂的批量数据处理**：时间跨度通常在数十分钟到数小时之间
+* **基于历史数据的交互式查询**：时间跨度通常在数十秒到数分钟之间
+* **基于实时数据流的数据处理**：时间跨度通常在数百毫秒到数秒之间
+
+![BDAS架构](images/2023-02-07-17-52-53.png)
+
+Spark 生态系统已经成为伯克利数据分析软件栈 BDAS（Berkeley Data Analytics Stack）的重要组成部分。上图为BDAS的架构
+
+从上图可以看出，**Spark 专注于数据的处理分析**，而数据的存储还是要借助于Hadoop 分布式文件系统 HDFS、Amazon S3等来实现
+
+Spark 生态系统主要包含了 Spark Core、Spark SQL、Spark Streaming、MLlib 和 GraphX 等组件，各组件的具体功能如下：
+
+* **Spark Core**：Spark Core 包含 Spark 的基本功能，如内存计算、任务调度、部署模式、故障恢复、存储管理等，**主要面向批数据处理**
+* **Spark SQL**：Spark SQL 允许开发人员直接处理 RDD，同时也可查询 Hive、HBase 等外部数据源
+* **Spark Streaming**：Spark Streaming 支持高吞吐量、可容错处理的**实时流数据处理**。其核心思路是将流数据分解成一系列短小的批处理作业，每个短小的批处理作业都可以使用 Spark Core 进行快速处理
+* **MLlib（机器学习）**：MLlib 提供了常用机器学习算法的实现，包括聚类、分类、回归、协同过滤等
+* **GraphX（图计算）**：GraphX 是 Spark 中用于图计算的 API，GraphX 性能良好，拥有丰富的功能和运算符，能在海量数据上自如地运行复杂的图算法
+
+需要说明的是，无论是 Spark SQL、Spark Streaming、MLlib 还是 GraphX，都可以使用 Spark Core 的 API 处理问题，它们的方法几乎是通用的，处理的数据也可以共享，不同应用之间的数据可以无缝集成
+
+![生态系统](images/2023-02-07-17-52-32.png)
+
+### 与 MapReduce 的区别
+
+### 9.3 运行架构
+
+#### 9.3.1 基本概念
+
+* RDD：弹性分布式数据集（Resilient Distributed Dataset）的英文缩写，是分布式内存的一个抽象概念，提供了一种高度受限的共享内存模型
+* DAG：是 Directed Acyclic Graph（有向无环图）的英文缩写，反映 RDD 之间的依赖关系
+* Executor：是运行在工作节点（Worker Node）上的一个进程，负责运行任务Task
+* Application(应用)：用户编写的Spark应用程序
+* Task(任务)：运行在 Executor 上的工作单元
+* Job(作业)：一个Job包含多个RDD及作用于相应RDD上的各种操作
+* Stage(阶段)：是作业Job的基本调度单位，一个作业Job会分为多组任务Task，每组任务Task被称为「阶段」Stage，或者也被称为「任务集」TaskSet
+
+#### 9.3.2 架构设计
+
+![Spark运行架构](images/2023-02-07-21-45-10.png)
+
+Spark运行架构如图所示
+
+Spark运行架构包括集群资源管理器（Cluster Manager）、运行作业任务的工作节点（Worker Node）、每个应用的任务控制节点（Driver）和每个工作节点上负责具体任务的执行进程（Executor）。其中，集群资源管理器可以是 Spark 自带的资源管理器，也可以是 YARN 或Mesos 等资源管理框架
+
+与Hadoop MapReduce计算框架相比，Spark所采用的Executor有两个优点：
+* 一是利用多线程来执行具体的任务，减少任务的启动开销
+* 二是Executor中有一个BlockManager存储模块，会将内存和磁盘共同作为存储设备，有效减少IO开销
+
+![Spark中各种概念的相互关系](images/2023-02-07-21-48-27.png)
+
+上图展示了Spark中各种概念的相互关系
+
+在Spark中，一个应用(Application)由一个任务控制节点(Driver)和若干作业(Job)组成，一个作业由若干个阶段(Stage)构成，一个阶段由多个任务(Task)组成
+
+当执行一个应用时，任务控制节点会向集群管理器（Cluster Manager）申请资源，启动 Executor，并向 Executor 发送应用程序代码和文件，然后在 Executor 上执行任务，运行结束后执行结果会返回给任务控制节点，或者写到 HDFS 或者其他数据库中
+
+#### 9.3.3 运行基本流程
+
+![Spark运行基本流程图](images/2023-02-07-21-53-17.png)
+
+Spark运行基本流程如下：
+
+1. 当一个 Spark 应用被提交时，首先需要**为这个应用构建起基本的运行环境**，即**由任务控制节点（Driver）创建一个 SparkContext**，**由 SparkContext 负责和资源管理器（Cluster Manager）的通信以及进行资源的申请、任务的分配和监控等**。SparkContext 会向资源管理器注册并申请运行 Executor 的资源
+2. **资源管理器为 Executor 分配资源，并启动 Executor 进程**
+3. **SparkContext 根据 RDD 的依赖关系构建 DAG 图**，**DAG 图提交给 DAG 调度器（DAGScheduler）进行解析**，将 DAG 图分解成多个「阶段」（每个阶段都是一个任务集），并且计算出各个阶段之间的依赖关系，然后**把一个个「任务集」提交给底层的任务调度器（TaskScheduler）进行处理**；**Executor 向 SparkContext 申请任务Task**，**任务调度器将任务分发给 Executor 运行，同时SparkContext 将应用程序代码发放给 Executor**
+4. **任务在 Executor 上运行，把执行结果反馈给任务调度器，然后反馈给 DAG 调度器，运行完毕后写入数据并释放所有资源**
+
+总体而言，Spark 运行架构具有以下特点:
+
+* 每个应用都有自己专属的 Executor 进程，并且该进程在应用运行期间一直驻留。Executor进程以**多线程**的方式运行任务
+* Spark 运行过程与资源管理器无关，只要能够获取 Executor 进程并保持通信即可
+* **Executor 上有一个 BlockManager 存储模块**，在处理迭代计算任务时，不需要把中间结果写入到 HDFS 等文件系统，而是直接放在这个存储系统上，后续有需要时就可以直接读取
+* **任务采用了数据本地性和推测执行等优化机制**。数据本地性是尽量将计算移到数据所在的节点上进行，即「计算向数据靠拢」
+
+### 运行的基本流程
+
+### 阶段的划分：宽依赖、窄依赖
