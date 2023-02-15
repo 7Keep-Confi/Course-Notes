@@ -32,3 +32,31 @@
 如所给的中间例子，将 $x$ 换成 A 后，再去掉存在量词即可
 
 最后一个例子中：可以看到 $x$ 是在全称量词的辖域中，而 $z$ 不在全称量词的辖域中，因此 用 Skolem常量 A 代替 $z$ ，用Skolem函数 $g(y)$ 代替 $x$ 
+
+## 习题
+
+1. 用谓词演算公式表示下列英文句子（多用而不是省用不同谓词和项。例如不要用单一的谓词字母来表示每个句子）
+
+A computer system is intelligent if it can perform a task which, if performed by a human, requires intelligence.
+
+首先，定义基本谓词：
+
+* INTLT(x) : x is intelligent
+* PERFORM(x, y) : x can perform y
+* REQUIRE(x) : x requires intelligence
+* CMP(x) : x is a computer system
+* HMN(x) : x is a human
+
+上面的句子可以表达为：
+
+$(\forall x) \left\{ (\exists t)(\exists y) \left[ HMN(y) \land PERFORM(y,t) \land REQUIRE(t) \land CMP(x) \land PERFORM(x,t) \right] \to INTIT(x) \right\}  $
+
+> 由题可知，该英文句子的意思是：如果一个计算机系统可以完成一个人类可以完成的任务并且该任务是需要智能的，那么这个计算机系统就是智能的
+> 这是一个形如「如果...那么...」的句子，所以可以知道该谓词演算公式总体上是一个蕴含式，前面的条件都满足后，就能得出结论。所以蕴含符号的左边应该是一个合取式
+
+用谓词表示命题时:
+
+**对全称量词，把限定谓词作为蕴含式的前件加入，即 $(\forall x) (P(x) \to \cdots )$**
+
+**对于存在量词，把限定谓词作为一个合取项加入，即 $\exists (x) (P(x) \land \cdots )$**
+
