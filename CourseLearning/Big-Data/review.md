@@ -477,3 +477,115 @@ MapReduce 无法满足流计算系统的需求，**MapReduce 是专门面向静�
 * **面对的数据不同**：**流处理系统**处理的是**实时的数据**，而**传统的数据处理系统**处理的是预先存储好的**静态数据**
 * **用户获取的结果不同**：用户通过流处理系统获取的是实时结果，而通过传统的数据处理系统，获取的是过去某一时刻的结果
 * **用户获取结果的方式不同**：流处理系统无需用户主动发出查询，实时查询服务可以**主动将实时结果推送给用户**
+
+### 10.3 开源流框架Storm
+
+#### 10.3.1 概念与特点
+
+Twitter Storm 是一个免费、开源的**分布式实时计算系统**，Storm 可以简单、高效、可靠地处理流数据，并支持多种编程语言
+
+Storm 框架可以方便地与数据库系统进行整合，从而开发出强大的实时计算系统
+
+Storm 具有如下主要特点：
+
+* 整合性：Storm可方便地与队列系统和数据库系统进行整合
+* 简易的API：Storm的API在使用上即简单又方便
+* 可扩展性：Storm的并行特性使其可以运行在分布式集群中
+* 容错性：Storm可自动进行故障节点的重启、任务的重新分配
+* 可靠的消息处理：Storm保证每个消息都能完整处理
+* 支持各种编程语言：Storm支持使用各种编程语言来定义任务
+* 快速部署：Storm可以快速进行部署和使用
+* 免费、开源：Storm是一款开源框架，可以免费使用
+
+#### 10.3.2 Storm 的设计思想
+
+##### 相关术语介绍
+
+主要术语包括：Streams、Spouts、Bolts、Topology 和 Stream Groupings
+
+1. Streams
+
+Storm 将流数据 Streams 描述成一个**无限的 tuple 序列**。这些 tuple 序列会以**分布式**的方式**并行**地创建和处理
+
+![Streams](images/2023-02-19-19-39-37.png)
+
+> * tuple 即元组，是元素的有序列表
+> * 每一个 tuple 就是一个值列表，列表中的每个值都有对应的名称，且该值可以是任何类型：基本类型、字符类型、字节数组和其他可序列化的类型等
+
+2. Spouts
+
+Storm 认为每个 Stream 都有一个源头，并把这个源头抽象为 Spouts。Spouts 会从外部读取流数据并持续发出 Tuple
+
+![Spouts](images/2023-02-19-19-41-42.png)
+
+3. Bolts
+
+Storm 将 Streams 的状态转换过程抽象为 Bolts
+
+Bolt即可以处理Tuple，也可以将处理后的Tuple作为新的Streams发送给其他Bolt
+
+对 Tuple 的处理逻辑都被封装在 Bolts 中，可执行过滤、聚合、查询等操作
+
+![Bolts](images/2023-02-19-19-45-16.png)
+
+4. Topology
+
+Storm 将 Spouts 和 Bolts 组成的网络抽象成 Topology，它可以被提交到 Storm 集群执行
+
+一个 Topology 就是一个流转换图，图中节点是一个 Spout 或 Bolt，图中的边则表示 Bolt 订阅了哪个 Stream
+
+当Spout或者Bolt发送元组时，它会把元组发送到每个订阅了该Stream的Bolt上进行处理
+
+![Topology](images/2023-02-19-19-53-28.png)
+
+Topology里面的每个处理组件（Spout或Bolt）都包含处理逻辑， 而组件之间的连接则表示数据流动的方向
+
+Topology里面的每一个组件都是并行运行的
+
+5. Stream Groupings
+
+Storm 中的 Stream Groupings 用于告知 Topology 如何在两个组件间（如 Spout 和 Bolt 之间，或者不同的 Bolt 之间）进行 Tuple 的传送
+
+![Stream Groupings](images/2023-02-19-19-57-01.png)
+
+箭头表示 Tuple 的流向，而圆圈则表示任务，每一个 Spout 和 Bolt 都可以有多个分布式任务，**一个任务在什么时候、以什么方式发送 Tuple 就是由 Stream Groupings 来决定的**
+
+目前，Storm 中的 Stream Groupings 有如下 6 种方式：
+
+* ShuffleGrouping：随机分组，随机分发Stream中的Tuple，保证每个Bolt的Task接收Tuple数量大致一致
+* FieldsGrouping：按照字段分组，保证相同字段的Tuple分配到同一个Task中
+* AllGrouping：广播发送，每一个Task都会收到所有的Tuple
+* GlobalGrouping：全局分组，所有的Tuple都发送到同一个Task中
+* NonGrouping：不分组，和ShuffleGrouping类似，当前Task的执行会和它的被订阅者在同一个线程中执行
+* DirectGrouping：直接分组，直接指定由某个Task来执行Tuple的处理
+
+##### Storm 的框架设计
+
+Storm 运行在分布式集群中，其运行任务的方式与 Hadoop 类似：在 Hadoop 上运行的是 MapReduce 作业，而在 Storm 上运行的是「Topology」
+
+两者的任务大不相同，其中主要的不同是：一个 MapReduce 作业最终会完成计算并结束运行，而一个 Topology 将**持续**处理消息（直到人
+为终止）
+
+![Storm和Hadoop组件对应](images/2023-02-19-20-17-28.png)
+
+Storm集群采用「Master—Worker」的节点方式：
+
+* Master 节点：运行名为「Nimbus」的后台程序（类似Hadoop中的「JobTracker」），**负责在集群范围内分发代码、为Worker分配任务和监测故障**
+* Worker 节点：运行名为「Supervisor」的后台程序，负责监听分配给它所在机器的工作，即**根据Nimbus分配的任务来决定启动或停止Worker进程**，一个Worker节点上同时运行若干个Worker进程
+
+![Storm集群架构](images/2023-02-19-20-23-47.png)
+
+Storm使用Zookeeper来作为**分布式协调组件**，**负责Nimbus和多个Supervisor之间的所有协调工作**。**借助于Zookeeper**，若Nimbus进程或Supervisor进程意外终止，重启时也能读取、恢复之前的状态并继续工作，**使得Storm极其稳定**
+
+> Master 节点并没有直接和 Worker 节点通信，而是借助 Zookeeper 将状态信息存放在 Zookeeper中或本地磁盘中，以便节点故障时进行快速恢复
+
+![Worker、Executor和Task的关系](images/2023-02-19-20-28-10.png)
+
+* Worker进程：**每个worker进程都属于一个特定的Topology**，每个Supervisor节点的worker可以有多个，每个worker对Topology中的每个组件（Spout或 Bolt）运行一个或者多个executor线程来提供task的运行服务
+* Executor进程：executor是产生于worker进程内部的线程，会执行**同一个组件**的一个或者多个task
+* Task：**实际的数据处理由task完成**，在Topology的生命周期中，每个组件的task数目是不会发生变化的，而executor的数目却不一定。executor数目小于等于task的数目，默认情况下，二者是相等的
+
+> 每台Supervisor上运行着若干worker进程
+> 每个worker进程中运行着若干Executor线程
+> 每个Executor线程里运行着若干相同的Task
+
