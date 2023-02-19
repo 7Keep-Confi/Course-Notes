@@ -588,4 +588,3 @@ Storm使用Zookeeper来作为**分布式协调组件**，**负责Nimbus和多个
 > 每台Supervisor上运行着若干worker进程
 > 每个worker进程中运行着若干Executor线程
 > 每个Executor线程里运行着若干相同的Task
-
