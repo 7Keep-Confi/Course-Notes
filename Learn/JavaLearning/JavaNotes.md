@@ -50,3 +50,25 @@ x += 3.5; // 相当于 x = (int)(x + 3.5),该行语句不会发生报错
 逻辑运算符 & 和 && 的区别：
 
 一旦遇到false的情况，&&不会继续判断剩余的情况，直接返回false，而 & 仍会继续判断
+
+### 1.3 流程控制
+
+使用Scanner类从键盘获取输入：
+
+1. 引入相关的包: `import java.util.Scanner;` 
+2. 声明一个Scanner对象：`Scanner sc = new Scanner(System.in);`
+3. 根据输入的数据类型调用相应的类：
+   
+   ```java
+    import java.util.Scanner;
+    Scanner sc = new Scanner(System.in);
+
+    int numInt = sc.nextInt();
+    double numDouble = sc.nextDouble();
+    String name = sc.next();
+   ```
+
+如何获取一个随机数?
+
+1. 使用Math类中的random()方法
+2. 获取某个范围内的整数：`int num = (int)(min + Math.random() * (max - min + 1));`
