@@ -53,7 +53,7 @@ x += 3.5; // 相当于 x = (int)(x + 3.5),该行语句不会发生报错
 
 ### 1.3 流程控制
 
-使用Scanner类从键盘获取输入：
+#### 使用Scanner类从键盘获取输入：
 
 1. 引入相关的包: `import java.util.Scanner;` 
 2. 声明一个Scanner对象：`Scanner sc = new Scanner(System.in);`
@@ -66,11 +66,61 @@ x += 3.5; // 相当于 x = (int)(x + 3.5),该行语句不会发生报错
     int numInt = sc.nextInt();
     double numDouble = sc.nextDouble();
     String name = sc.next();
+    char c = sc.next().charAt(0);// 输入一个字符
    ```
 
 需要注意的是，Scanner类并没有定义读取字符的方法，因此当我们需要读取一个字符时，可以这么做 `sc.next().charAt(0)`
 
-如何获取一个随机数?
+#### 如何获取一个随机数?
 
 1. 使用Math类中的random()方法
 2. 获取某个范围内的整数：`int num = (int)(min + Math.random() * (max - min + 1));`
+
+#### break语句
+
+在多层循环的嵌套中，break语句可以通过 `break 标签名` 来退出指定的循环，但在开发中不推荐这么使用
+
+### 1.4 数组
+
+#### 使用方式1-动态初始化
+
+可以这样定义数组：
+
+![数组的动态初始化](images/2024-03-01-10-42-53.png)
+
+完成数据的输入并用数组存放：
+
+```Java
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        double[] scores = new double[5];
+
+        Scanner input = new Scanner(System.in);
+        for (int i = 0; i < scores.length; i++) {
+            System.out.println("请输入第" + i + "个数:");
+            scores[i] = input.nextDouble();
+        }
+
+        for (int i = 0; i < scores.length; i++) {
+            System.out.println("输出:");
+            System.out.println("scores[" + i + "] = " + scores[i]);
+        }
+
+    }
+
+}
+```
+
+#### 使用方式2-先声明再分配
+
+```Java
+int[] nums; // 先声明数组nums
+nums = new int[5]; // 再动态分配空间
+```
+
+#### 使用方式3-静态初始化
+
+![数组的静态初始化](images/2024-03-01-10-51-30.png)
+
