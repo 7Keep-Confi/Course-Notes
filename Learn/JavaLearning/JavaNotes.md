@@ -222,3 +222,60 @@ class B {
 上面这段程序的输出结果如下：
 
 ![图2-11 跨类方法调用程序输出结果](images/2024-03-01-17-33-15.png)
+
+#### 重载
+
+##### 1 理解
+
+在Java中，同一个类允许存在多个**同名**的方法，但要求**形参列表不一致**
+
+重载案例：
+
+```Java
+public class Main {
+    public static void main(String[] args) {
+       MyCalculator mc = new MyCalculator();
+       System.out.println(mc.calculate(2, 4));
+       System.out.println(mc.calculate(2, 3.2));
+       System.out.println(mc.calculate(3.4, 3));
+       System.out.println(mc.calculate(3, 2, 1));
+    }
+
+}
+
+class MyCalculator {
+    public int calculate(int n1, int n2){
+        System.out.println("public int calculate(int n1, int n2)被运行...");
+        return n1 + n2;
+    }
+
+    public double calculate(int n1, double n2){
+        System.out.println("public double calculate(int n1, double n1)被运行...");
+        return n1 + n2;
+    }
+
+    public double calculate(double n1, int n2){
+        System.out.println("public double calculate(double n1, int n2)被运行...");
+        return n1 + n2;
+    }
+
+    public int calculate(int n1, int n2, int n3){
+        System.out.println("public int calculate(int n1, int n2, int n3)被运行...");
+        return n1 + n2 + n3;
+    }
+}
+```
+
+上述程序输出结果如下：
+
+![图2-12 重载程序示例运行结果](images/2024-03-01-21-06-07.png)
+
+##### 细节说明
+
+重载要求：
+
+1. 方法名必须相同
+2. 形参列表必须不同。形参**类型**、**个数**或**顺序**，至少有一样不同（仅参数名不同不是重载）
+3. 返回类型无要求
+
+> 注意，如果方法名相同，形参类型、个数、顺序也相同，但返回类型不同，也**不构成重载**，此时编译器会认为方法重复定义
