@@ -330,3 +330,48 @@ class A {
  上述程序的运行结果：
 
  ![图2-16 作用域示例程序运行结果](images/2024-03-01-21-57-25.png)
+
+ #### 构造方法/构造器
+
+ 构造方法是类的一种特殊方法，其作用是完成对新对象的初始化。构造方法的特点如下：
+
+ * 方法名和类名相同
+ * 无返回值
+ * 在创建对象时，由**系统自动调用该类的构造方法**完成对象的**初始化**
+
+构造方法示例如下：
+
+```Java
+public class Main {
+    public static void main(String[] args) {
+        Person p1 = new Person("Jack", 50);
+        System.out.println("p1的信息如下: ");
+        System.out.println("p1的name = " + p1.name);
+        System.out.println("p1的age = " + p1.age);
+    }
+
+}
+
+class Person {
+    String name;
+    int age;
+
+    public Person(String pName, int pAge) {
+        System.out.println("构造方法被调用....完成对象的初始化！");
+        name = pName;
+        age = pAge;
+    }
+}
+```
+
+运行结果如下：
+
+![图2-17 构造方法示例程序运行结果](images/2024-03-03-11-36-16.png)
+
+##### 细节
+
+一个类可以定义多个不同的构造器即**构造器重载**
+
+如果程序员没有定义构造器，则**系统会自动生成默认的无参构造器**(默认构造器)，例如 `Person() {}`
+
+但是，一旦定义了构造器，默认构造器就被**覆盖**了，就不能再使用默认的无参构造器（也就是不能再使用 `Person p1 = new Person();`），除非**显示**定义默认构造器
