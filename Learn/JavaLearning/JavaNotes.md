@@ -444,3 +444,114 @@ class 子类 extends 父类 {
 ![图2-23 向上转型](images/2024-03-04-11-52-30.png)
 
 可以调用父类的所有成员（需遵守访问权限），但不能调用子类的特有成员。最终运行效果看子类的具体实现，如果子类没有就往上寻找父类的
+
+### 2.3 面向对象编程(高级)
+
+#### 2.3.1 单例设计模式
+
+##### (1) 理解
+
+什么是单例设计模式？
+
+类的单例设计模式，是指采用一定的方法，在整个软件系统中，**对某个类只能存在一个对象实例**，并且该类只提供一个获取其对象实例的方法
+
+单例模式有两种：饿汉式和懒汉式
+
+##### (2) 饿汉式单例模式的实现
+
+步骤如下：
+
+1. 构造器私有化
+2. 在类的内部创建对象
+3. 向外暴露一个静态的公共方法(getInstance)
+
+代码实现如下：
+
+```Java
+package com.training.single_;
+
+public class SingleTon01 {
+    public static void main(String[] args) {
+        GirlFriend instance = GirlFriend.getInstance();
+        System.out.println(instance);
+    }
+}
+
+class GirlFriend {
+    private String name;
+
+    //2.类的内部创建对象,为了能够在静态方法返回gf对象,需要将其修饰为static
+    private static GirlFriend gf = new GirlFriend("小红");
+
+    // 1.构造器私有化
+    private GirlFriend(String name) {
+        this.name = name;
+    }
+
+    // 3.向外暴露一个公共(静态)方法,返回gf对象
+    public static GirlFriend getInstance(){
+        return gf;
+    }
+
+    @Override
+    public String toString() {
+        return "GirlFriend{" +
+                "name='" + name + '\'' +
+                '}';
+    }
+}
+```
+
+为什么对外暴露的公共方法要用static修饰？
+
+如果不用static修饰，那如果要在main函数中调用该方法，就得先new一个对象，但这与我们要求的不能在main方法中创建对象相违背，因此需要用static来修饰，这样main方法中就可以调用`getInstance()`方法来获取gf对象
+
+另外，饿汉式可能会造成创建了对象但并没有使用的情况
+
+##### (3) 懒汉式单例模式实现
+
+不说了，都在代码里了
+
+```Java 
+package com.training.single_;
+
+public class SingleTon02 {
+    public static void main(String[] args) {
+        Cat instance = Cat.getInstance();
+        System.out.println(instance);
+    }
+}
+
+class Cat {
+    private String name;
+    private static Cat cat1;
+
+    /*步骤
+    * 1.构造器私有化
+    * 2.在类内部创建对象
+    * 3.提供一个public的static方法，返回Cat对象
+    * 4.懒汉式：只有当用户使用了getInstance()才返回Cat对象，后面再次调用还是会返回上次创建
+    * 的对象，从而保证了单例
+    * */
+    private Cat(String name) {
+        this.name = name;
+    }
+
+    public static Cat getInstance(){
+        if(cat1 == null){
+            cat1 = new Cat("喵喵喵");
+            return cat1;
+        }
+        return cat1;
+    }
+
+    @Override
+    public String toString() {
+        return "Cat{" +
+                "name='" + name + '\'' +
+                '}';
+    }
+}
+```
+
+饿汉式和懒汉式最主要的区别在于**二者创建对象的时机不同**，饿汉式是在**类加载时**就创建了对象，懒汉式则是在**使用时**才创建
