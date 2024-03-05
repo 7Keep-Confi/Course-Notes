@@ -603,3 +603,40 @@ class Cat {
 
 ##### (3) 接口的多态特性
 
+## 3 枚举类   
+
+## 4 异常
+
+## 5 集合
+
+### 5.1 集合的框架体系
+
+![图5-1-1 集合框架的简单示意图](images/2024-03-05-11-16-58.png)
+
+### 5.2 Collection方法
+
+![图5-2-1 常用方法](images/2024-03-05-11-36-22.png)
+
+### 5.3 迭代器遍历
+
+```Java
+public class CollectionIterator {
+    public static void main(String[] args) {
+        Collection coll = new ArrayList();
+        coll.add(new Book("三国演义", "罗贯中", 15.8));
+        coll.add(new Book("红楼梦", "曹雪芹", 19.8));
+        coll.add(new Book("西游记", "吴承恩", 20.8));
+
+        //System.out.println("coll=" + coll);
+        Iterator iterator = coll.iterator();//先得到coll对应的迭代器
+        while (iterator.hasNext()){//判断是否还有数据
+            //返回下一个元素，类型为object
+            Object obj = iterator.next();
+            System.out.println(obj);
+        }
+    }
+}
+```
+
+![图5-3-1 迭代器遍历细节](images/2024-03-05-11-57-48.png)
+
