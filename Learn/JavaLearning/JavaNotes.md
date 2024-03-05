@@ -685,3 +685,135 @@ public class CollectionExer {
 
 ![图5-4-4 ArrayList细节](images/2024-03-05-16-02-31.png)
 
+### 5.5 Map接口
+
+#### 5.5.1 特点
+
+![图5-5-1 Map接口实现类的特点](images/2024-03-05-16-35-55.png)
+
+#### 5.5.2 Map接口常用方法
+
+![图5-5-2 Map接口常用方法](images/2024-03-05-16-57-48.png)
+
+#### 5.5.3 Map接口遍历方法(重点关注，需要好好品品)
+
+![图5-5-3 Map接口遍历方法](images/2024-03-05-17-17-37.png)
+
+下面展示了通过`keySet()`获取所有键
+
+```Java
+public class MapFor {
+    public static void main(String[] args) {
+        Map map = new HashMap();
+        map.put("邓超", "孙俪");
+        map.put("鹿晗", "关晓彤");
+        map.put("zzz", null);
+
+        System.out.println("-----第一种：增强for-----");
+        Set keySet = map.keySet();
+        for(Object key : keySet){
+            System.out.println(key + "->" + map.get(key));
+        }
+
+        System.out.println("------第二种：迭代器-----");
+        Iterator iterator = keySet.iterator();
+        while (iterator.hasNext()) {
+            Object key =  iterator.next();
+            System.out.println(key + "->" + map.get(key));
+
+        }
+    }
+}
+```
+
+![图5-5-4 Map接口遍历所有value](images/2024-03-05-17-19-31.png)
+
+![图5-5-5 第三种Map接口遍历1](images/2024-03-05-17-22-29.png)
+
+![图5-5-6 第三种Map接口遍历2](images/2024-03-05-17-24-33.png)
+
+下面是两种典型遍历方式的完整代码
+
+```Java
+package com.training.map_;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+public class MapExer {
+    public static void main(String[] args) {
+        Map map = new HashMap();
+        map.put(1, new Employee("mary", 15000, 1));
+        map.put(2, new Employee("kevin", 5000, 2));
+        map.put(3, new Employee("mike", 25000, 3));
+
+        System.out.println("第一种遍历：增强for----");
+        Set keySet = map.keySet();//keySet()
+        for(Object key : keySet){
+            Employee emp = (Employee) map.get(key);//获取value并向下转型
+            if(emp.getSalary() > 18000){
+                System.out.println(emp);
+            }
+        }
+
+        System.out.println("----使用entrySet----");
+        Set entrySet = map.entrySet();
+        Iterator iterator = entrySet.iterator();
+        while(iterator.hasNext()){
+            Map.Entry entry = (Map.Entry) iterator.next();
+            Employee emp = (Employee) entry.getValue();
+            if(emp.getSalary() > 18000){
+                System.out.println(emp);
+            }
+        }
+
+    }
+}
+
+class Employee {
+    private String name;
+    private double salary;
+    private int id;
+
+    public Employee(String name, double salary, int id) {
+        this.name = name;
+        this.salary = salary;
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(double salary) {
+        this.salary = salary;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "name='" + name + '\'' +
+                ", salary=" + salary +
+                ", id=" + id +
+                '}';
+    }
+}
+```
