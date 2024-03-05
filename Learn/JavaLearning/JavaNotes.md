@@ -640,3 +640,29 @@ public class CollectionIterator {
 
 ![图5-3-1 迭代器遍历细节](images/2024-03-05-11-57-48.png)
 
+下面展示了如何用迭代器遍历和for增强遍历
+
+```Java
+public class CollectionExer {
+    public static void main(String[] args) {
+        List list = new ArrayList();
+        list.add(new Dog("大黄", 8));
+        list.add(new Dog("中黄", 5));
+        list.add(new Dog("小黄", 2));
+
+        //迭代器遍历
+        System.out.println("使用迭代器=====");
+        Iterator iterator = list.iterator();
+        while (iterator.hasNext()){
+            Object obj  = iterator.next();
+            System.out.println(obj);
+        }
+
+        //for增强遍历
+        System.out.println("使用for增强=====");
+        for(Object dog : list){
+            System.out.println("dog=" + dog);
+        }
+    }
+}
+```
