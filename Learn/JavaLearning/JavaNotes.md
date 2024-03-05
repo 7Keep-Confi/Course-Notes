@@ -666,3 +666,22 @@ public class CollectionExer {
     }
 }
 ```
+
+### 5.4 List常用方法和细节
+
+![图5-4-1 List接口基本介绍](images/2024-03-05-15-15-40.png)
+
+![图5-4-2 List接口常用方法](images/2024-03-05-15-22-10.png)
+
+其中方法 `subList(int fromIndex, int toIndex)` 返回的是**集合**，并且范围是 [fromIndex, toIndex) 是一个**左闭右开**区间
+
+#### 5.4.1 List的三种遍历方式
+
+![图5-4-3 List遍历](images/2024-03-05-15-42-44.png)
+
+注意，这三种方式都适用于ArrayList, LinkedList, Vector
+
+#### 5.1.2 ArrayList细节
+
+![图5-4-4 ArrayList细节](images/2024-03-05-16-02-31.png)
+
