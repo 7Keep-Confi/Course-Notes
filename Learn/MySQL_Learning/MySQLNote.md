@@ -221,3 +221,89 @@ order by
 注意：
 
 1. 分组函数自动忽略NULL
+
+### 1.6 连接查询
+
+在一张表中查询数据，称为**单表查询**
+
+多张表联合起来的**跨表查询数据**，称为**连接查询**
+
+连接查询时需要加条件，只有满足条件的才会筛选出来，否则就会产生笛卡尔积现象
+
+![图1-6-1 连接查询示例1](images/2024-03-07-18-16-38.png)
+
+![图1-6-2 表起别名](images/2024-03-07-18-18-47.png)
+
+#### 1.6.1 内连接
+
+##### (1) 等值连接
+
+案例：查询每个员工的部门，要求显示员工名和对应的部门名
+
+-> 将emp e 和 dept d 两张表进行连接，条件是 e.deptno = d.deptno
+
+SQL92语法：
+
+```mysql
+select
+    e.ename,d.dname
+from
+    emp e,dept d
+ where e.deptno = d.deptno;
+```
+
+SQL99语法：
+
+```MySQL
+select
+    e.ename,d.dname
+from
+    emp e
+join
+    dept d
+ on 
+    e.deptno = d.deptno;
+```
+
+##### (2) 非等值连接
+
+```mysql
+select
+    e.ename,e.sal,s.grade
+from
+    emp e join salgrade s
+on
+    e.sal between s.losal and s.hisal;
+```
+
+条件不是一个等值关系，称为非等值连接
+
+##### (3) 自连接
+
+把一张表看作两张表
+
+```MySQL
+select a.ename as '员工名',b.ename as '领导名'
+from emp a join emp b
+on a.mgr = b.empno;
+```
+
+#### 1.6.2 外连接
+
+内连接是将和条件完全匹配的数据显示出来
+
+```MySQL
+select
+    e.ename,d.dname
+from
+    emp e
+right join
+    dept d
+ on 
+    e.deptno = d.deptno;
+```
+
+![图1-6-1 外连接示例1](images/2024-03-07-18-52-49.png)
+
+![图1-6-2 左外连接和右外连接](images/2024-03-07-18-55-46.png)
+
