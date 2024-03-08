@@ -329,6 +329,18 @@ create table 表名(
 );
 ```
 
+创建一个学生表，包含学号、姓名、性别、年龄、邮箱
+
+```MySQL
+create table t_stu(
+    stu_num int,
+    name varchar(32),
+    gender char(1),
+    age int(3),
+    email varchar(255)
+);
+```
+
 ![图1-8-1 建表的语法格式](images/2024-03-07-19-52-36.png)
 
 #### 1.8.2 数据类型
@@ -345,3 +357,65 @@ create table 表名(
 * datetime：长日期
 * clob(Character large object)：字符大对象，最多可以存储4G的字符串。通常用来存储一篇文章、一个说明。超过255个字符的数据都要用字符大对象来存储
 * blob(binary large object)：二进制大对象。用来存储图片、声音、视频等流媒体数据 
+
+#### 1.8.3 删除表
+
+`drop table tablename` 删除表名为tablename的表，但如果该表不存在会报错
+
+`drop table if exists tablename` 
+
+#### 1.8.4 插入数据-insert语句
+
+`insert into tablename(字段名1,字段名2,字段名3) values(值1,值2,值3);`
+
+字段名和值要一一对应
+
+```MySQL
+insert into t_stu(stu_num,name,gender,age,email) values(1,'zhangsan','f',18,'zhangsan@1145.com');
+insert into t_stu(stu_num,name,gender,age,email) values(2,'lisi','m',20,'lisi@11415');
+```
+
+insert语句如果没有给字段赋值，默认为NULL
+
+insert语句一旦执行成功，表中就会多一条记录
+
+也可以在建表时为字段指定默认值：
+
+```MySQL
+create table t_stu(
+    stu_num int,
+    name varchar(32),
+    gender char(1) default 'm',
+    age int(3),
+    email varchar(255)
+);
+```
+
+#### 1.8.5 插入日期
+
+![图1-8-2 格式化数字](images/2024-03-08-16-14-45.png)
+
+![图1-8-3 将字符串转化成日期](images/2024-03-08-16-20-12.png)
+
+`insert into t_user(id,name,birth) values(1, 'zhangsan', str_to_date('01-10-1999','%d-%m-%y'));`
+
+str_to_date() 语法格式：str_to_date('字符串日期','日期格式')
+
+![图1-8-4 不需函数的情况](images/2024-03-08-16-24-14.png)
+
+#### 1.8.6 date 和 datetime
+
+![图1-8-5 date和datetime的区别](images/2024-03-08-16-31-22.png)
+
+![图1-8-6 获取系统当前时间](images/2024-03-08-16-32-42.png)
+
+#### 1.8.7 更新update语句
+
+![图1-8-7 update语法](images/2024-03-08-16-35-27.png)
+
+`update tablename set 字段名1=值1,字段名2=值2,... where 条件;`
+
+#### 1.8.8 删除语句delete
+
+![图1-8-8 删除语句delete](images/2024-03-08-16-38-17.png)
+
